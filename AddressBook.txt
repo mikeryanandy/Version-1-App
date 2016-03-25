@@ -1,2 +1,5 @@
 declan odwyer,cabra,877008776,decodwyer@gmail.com,123-4567
 michael ryan,parkwest,875508776,mikeryanzandy@gmail.com,123-4567
+michelle ryan,4 banksville,876418874,michelle@ryan.com,123-34556
+paula fogarty,13 the laurels,087443355,paula@hornville.com,zip2333
+tom ryan,some address for tom,0876655,tomsaddress@gmail.com,zipidedodaa

@@ -5,15 +5,15 @@ import java.util.*;
 public class AddressBookEntry implements Comparable<AddressBookEntry>,Comparator<AddressBookEntry>{
 private String name;
 private String address;
-private long phoneNumber;
+private String phoneNumber;
 private String email;
 private String zipCode;
 
 public AddressBookEntry(String name){
-	this(name,null,0,null,null);
+	this(name,null,null,null,null);
 }
 
-public AddressBookEntry(String name,String address,long phoneNumber, String email,String zipCode){
+public AddressBookEntry(String name,String address,String phoneNumber, String email,String zipCode){
 	this.name = name;
 	this.address = address;
 	this.phoneNumber = phoneNumber;
@@ -32,7 +32,7 @@ public String getZipCode(){
 public void setAddress(String address){
 	this.address=address;
 }
-public void setPhoneNumber(long phone){
+public void setPhoneNumber(String phone){
 	this.phoneNumber=phone;
 }
 public void setEmail(String email){
@@ -45,7 +45,7 @@ public void setZipCode(String zip){
 
 
 public String toString(){
-	return "name: " + name
+	return "\n\nname: " + name
 			+ "\naddress: " + address
 			+ "\nphone: " + phoneNumber
 			+ "\nemail: " + email

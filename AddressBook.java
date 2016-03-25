@@ -27,13 +27,14 @@ public static void main(String[] args){
 }
 
 public void runApp(){	
-	setFileName("C:\\apps\\Version1 App\\version1\\AddressBook.txt");
+	setFileName("C:\\apps\\Version-1-App-Master\\version1\\AddressBook.txt");
 	listOfAddressRecords = application.readFromFile();
 	Scanner myScanner = new Scanner(System.in);
 	
 	String input = "";
 	do{
-		System.out.print("Enter S to Search or L to list all entries(E to exit:)");
+			
+		System.out.print("\nEnter S to Search or L to list all entries(E to exit:)");
 		input = myScanner.nextLine();
 		switch(input){
 			case "S":
@@ -57,7 +58,7 @@ public void openSearchDialogue(){
 	String address;
 	String email;
 	String zipCode;
-	long phoneNumber;
+	String phoneNumber;
 	
 	Collections.sort(listOfAddressRecords);
 	AddressBookEntry d = new AddressBookEntry(name);
@@ -75,15 +76,13 @@ public void openSearchDialogue(){
 				case "E":
 					System.out.println("Enter address: ");
 					d.setAddress(s.nextLine());
-					System.out.print("Enter phone number: ");
-					d.setPhoneNumber(s.nextLong());
-					s.nextLine();
-					System.out.print("Enter email addess: ");
+					System.out.println("Enter phone number: ");
+					d.setPhoneNumber(s.nextLine());
+					System.out.println("Enter email addess: ");
 					d.setEmail(s.nextLine());
-					System.out.print("Enter zipCode: ");
+					System.out.println("Enter zipCode: ");
 					d.setZipCode(s.nextLine());
 					System.out.println(name +" updated");
-					System.out.println(input);
 					break;
 				case "D":
 					listOfAddressRecords.remove(index);
@@ -98,7 +97,7 @@ public void openSearchDialogue(){
 			System.out.println("Enter address: ");
 			address = s.nextLine();
 			System.out.print("Enter phone number: ");
-			phoneNumber = s.nextLong();
+			phoneNumber = s.nextLine();
 			s.nextLine();
 			System.out.print("Enter email addess: ");
 			email = s.nextLine();
@@ -116,18 +115,18 @@ public void openSearchDialogue(){
 public void openListDialogue(){
 	String input= null;
 	Scanner s = new Scanner(System.in);
-	do{
+	
 	System.out.print("Do you want to list Address Book entries by (N)ame or by (Z)ip Code: ");
 	input = s.nextLine();
-	if(input.equals("N")){
+	if(input.toLowerCase().equals("n")){
 		Collections.sort(listOfAddressRecords);
 		System.out.println(listOfAddressRecords);
 		}
-	if(input.equals("Z")){
+	if(input.toLowerCase().equals("z")){
 		Collections.sort(listOfAddressRecords,new AddressBookEntry("name"));
 		System.out.println(listOfAddressRecords);
 		}
-	}while(input.equals("N")||input.equals("Z"));
+	//}while(input.equals("N")||input.equals("Z"));
 }
 
 public void setFileName(String fileName){
@@ -148,7 +147,7 @@ public List<AddressBookEntry> readFromFile(){
 	while ((lineFromFile = myBuffer.readLine()) != null) {
 				
 				addressEntryConstituents = Arrays.asList(lineFromFile.split("\\s*,\\s*"));
-				listOfAddressRecords.add(new AddressBookEntry(addressEntryConstituents.get(0),addressEntryConstituents.get(1),Long.parseLong(addressEntryConstituents.get(2)),addressEntryConstituents.get(3),addressEntryConstituents.get(4)));
+				listOfAddressRecords.add(new AddressBookEntry(addressEntryConstituents.get(0),addressEntryConstituents.get(1),addressEntryConstituents.get(2),addressEntryConstituents.get(3),addressEntryConstituents.get(4)));
 			}
 	
 	}
