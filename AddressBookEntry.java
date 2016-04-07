@@ -1,5 +1,6 @@
 package version1;
 import version1.*;
+
 import java.util.*;
 
 public class AddressBookEntry implements Comparable<AddressBookEntry>,Comparator<AddressBookEntry>{
@@ -45,7 +46,7 @@ public void setZipCode(String zip){
 
 
 public String toString(){
-	return "\n\nname: " + name
+	return "name: " + name
 			+ "\naddress: " + address
 			+ "\nphone: " + phoneNumber
 			+ "\nemail: " + email
@@ -85,4 +86,19 @@ public boolean equals(Object o) {
    public int compare(AddressBookEntry d, AddressBookEntry d1){
       return (d.zipCode).compareTo(d1.getZipCode());
    }
+
+public String getAddress() {
+	// TODO Auto-generated method stub
+	return address;
+}
+
+public String getPhoneNumber() {
+	// TODO Auto-generated method stub
+	return phoneNumber;
+}
+
+public String getEmail() {
+	// TODO Auto-generated method stub
+	return email;
+}
 }

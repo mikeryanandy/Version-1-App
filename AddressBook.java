@@ -1,40 +1,27 @@
 package version1;
 
-import version1.*;
-import java.nio.file.*;
-import java.util.stream.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.PrintWriter;
-import java.io.FileOutputStream;
 import java.util.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.io.IOException;
+import java.sql.*;
 
 public class AddressBook{
 private static AddressBook application;
-private String fileName; 
 private List<AddressBookEntry> listOfAddressRecords;
-private AddressBookEntry abe;
-
+private Connection connection;
+private Scanner myScanner;
 
 public static void main(String[] args){
 	System.out.println("Welcome to the AddressBook application");
 	application = new AddressBook();
 	application.runApp();
-	application.writeToFile();
 }
 
 public void runApp(){	
-	setFileName("C:\\apps\\Version-1-App-Master\\version1\\AddressBook.txt");
-	listOfAddressRecords = application.readFromFile();
-	Scanner myScanner = new Scanner(System.in);
-	
+	application.connectToDatabase("jdbc:mysql://localhost/addressbook");
+	myScanner = new Scanner(System.in);
 	String input = "";
 	do{
-			
-		System.out.print("\nEnter S to Search or L to list all entries(E to exit:)");
+		System.out.print("Enter S to Search or L to list all entries(E to exit:)");
 		input = myScanner.nextLine();
 		switch(input){
 			case "S":
@@ -53,123 +40,172 @@ public void runApp(){
 
 public void openSearchDialogue(){
 	System.out.print("Search for name: ");
-	Scanner s = new Scanner(System.in);
-	String name = s.nextLine();
-	String address;
-	String email;
-	String zipCode;
-	String phoneNumber;
-	
-	Collections.sort(listOfAddressRecords);
-	AddressBookEntry d = new AddressBookEntry(name);
-	int index = (Collections.binarySearch(listOfAddressRecords,d));
-	if(index >=0){
-		System.out.println("Record found - Full details of "+name+":");
-		d=listOfAddressRecords.get(index);
-		System.out.println(d);
-		String input = null;
-		do{
-		System.out.println("Do you want to (E)dit or (D)elete this record");
-		 input = s.nextLine();
-		
-			switch(input){
-				case "E":
-					System.out.println("Enter address: ");
-					d.setAddress(s.nextLine());
-					System.out.println("Enter phone number: ");
-					d.setPhoneNumber(s.nextLine());
-					System.out.println("Enter email addess: ");
-					d.setEmail(s.nextLine());
-					System.out.println("Enter zipCode: ");
-					d.setZipCode(s.nextLine());
-					System.out.println(name +" updated");
-					break;
-				case "D":
-					listOfAddressRecords.remove(index);
-					System.out.println("Item removed");
-					break;
-				}
-		}while (!(input.equals("E")||input.equals("D")));
-	}
-	else{
-		System.out.println("Record with name "+name+" not found. Do you want to create it Y/N");
-		if(s.nextLine().equals("Y")){
-			System.out.println("Enter address: ");
-			address = s.nextLine();
-			System.out.print("Enter phone number: ");
-			phoneNumber = s.nextLine();
-			s.nextLine();
-			System.out.print("Enter email addess: ");
-			email = s.nextLine();
-			System.out.print("Enter zipCode: ");
-			zipCode= s.nextLine();
-			listOfAddressRecords.add(new AddressBookEntry(name,address,phoneNumber,email,zipCode));
-			
+	String name = myScanner.nextLine();
+	AddressBookEntry d;
+	PreparedStatement pstmt;
+	try{
+		pstmt = connection.prepareStatement("select * from addressbookentries where name = ?");
+		pstmt.setString(1,name);
+		ResultSet rs = pstmt.executeQuery();	
+		if (!rs.isBeforeFirst() ) {    
+			System.out.println("Record with name "+name+" not found. Do you want to create it Y/N");
+			if(myScanner.nextLine().equals("Y")){
+				createNewEntity(name);
+			} 
 		}
-		
-	}
-
+		else
+		{
+			System.out.println("Record found - Full details of "+name+":");
+			rs.next();
+			d = new AddressBookEntry(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5));
+			System.out.println(d);
+			String input = null;
+			do{
+				System.out.println("Do you want to (E)dit or (D)elete this record");
+				input = myScanner.nextLine().toUpperCase();
+				switch(input){
+					case "E":
+						System.out.println("Enter address: ");
+						d.setAddress(myScanner.nextLine());
+						System.out.print("Enter phone number: ");
+						d.setPhoneNumber(myScanner.nextLine());
+						myScanner.nextLine();
+						System.out.print("Enter email addess: ");
+						d.setEmail(myScanner.nextLine());
+						System.out.print("Enter zipCode: ");
+						d.setZipCode(myScanner.nextLine());
+						System.out.println(name +" updated");
+						System.out.println(input);
+						updateAddressBookEntry(d);
+						break;
+					case "D":
+						deleteAddressBookEntry(name);
+						break;
+					}
+			}while (!(input.equals("E")||input.equals("D")));
+		}
+		}catch(SQLException e){
+			System.out.println("Problem finding "+name);
+			System.out.println(e);
+		}
 }
 	
-
 public void openListDialogue(){
 	String input= null;
-	Scanner s = new Scanner(System.in);
-	
+	do{
 	System.out.print("Do you want to list Address Book entries by (N)ame or by (Z)ip Code: ");
-	input = s.nextLine();
-	if(input.toLowerCase().equals("n")){
-		Collections.sort(listOfAddressRecords);
-		System.out.println(listOfAddressRecords);
+	input = myScanner.nextLine().toUpperCase();
+	switch (input){
+		case "N":
+		listOfAddressRecords = performSearch("name");
+		break;
+		case "Z":
+		listOfAddressRecords = performSearch("zipCode");
+		break;
 		}
-	if(input.toLowerCase().equals("z")){
-		Collections.sort(listOfAddressRecords,new AddressBookEntry("name"));
-		System.out.println(listOfAddressRecords);
-		}
-	//}while(input.equals("N")||input.equals("Z"));
+	}while(input.toLowerCase().equals("n")||input.toLowerCase().equals("z"));
 }
 
-public void setFileName(String fileName){
-	this.fileName = fileName;
+public List<AddressBookEntry> performSearch(String columnToOrderBy){
+PreparedStatement pstmt = null;
+ArrayList<AddressBookEntry> recordList = new ArrayList<AddressBookEntry>();
+
+try{
+	String statement = "select * from addressbookentries order by %s";
+	statement = String.format(statement,columnToOrderBy);
+	pstmt = connection.prepareStatement(statement);
+	ResultSet rs = pstmt.executeQuery();	
+	String name = null;
+	String address = null;
+	String phoneNumber = null;
+	String email = null;
+	String zipCode = null;
+	
+	while(rs.next()){
+		name = rs.getString(1);
+		address = rs.getString(2);
+		phoneNumber = rs.getString(3);
+		email = rs.getString(4);
+		zipCode = rs.getString(5);
+		recordList.add(new AddressBookEntry(name,address,phoneNumber,email,zipCode));
+	}
+	System.out.println(recordList);
+	}
+	catch(SQLException sqlException){
+		System.out.println("Error searching database with columnToSearchOn: "+columnToOrderBy );
+		sqlException.printStackTrace();
+		System.out.println(pstmt);
+	}
+return recordList;
 }
 
-public List<AddressBookEntry> readFromFile(){
-	List<String> addressEntryConstituents;
-	String lineFromFile;
-	BufferedReader myBuffer;
+private void deleteAddressBookEntry(String nameToDelete){
 	
 	try{
-	myBuffer = new BufferedReader(new FileReader(fileName));
+	PreparedStatement deleteStatement = connection.prepareStatement("delete from addressbookentries where name = ?");
+	deleteStatement.setString(1,nameToDelete);
+	deleteStatement.executeUpdate();
+	System.out.println(nameToDelete +" deleted!");
+	}
+	catch(SQLException e){
+		System.out.println("problem deleting record "+ nameToDelete);
+		System.out.println(e);
+	}
+}
+
+private void createNewEntity(String nameToInsert){
+	AddressBookEntry d = new AddressBookEntry(nameToInsert);
+	System.out.println("Enter address: ");
+	d.setAddress(myScanner.nextLine());
+	System.out.print("Enter phone number: ");
+	d.setPhoneNumber(myScanner.nextLine());
+	myScanner.nextLine();
+	System.out.print("Enter email addess: ");
+	d.setEmail(myScanner.nextLine());
+	System.out.print("Enter zipCode: ");
+	d.setZipCode(myScanner.nextLine());
+	System.out.println(nameToInsert +" updated");
 	
-	listOfAddressRecords = new ArrayList<AddressBookEntry>();
-	
-	
-	while ((lineFromFile = myBuffer.readLine()) != null) {
-				
-				addressEntryConstituents = Arrays.asList(lineFromFile.split("\\s*,\\s*"));
-				listOfAddressRecords.add(new AddressBookEntry(addressEntryConstituents.get(0),addressEntryConstituents.get(1),addressEntryConstituents.get(2),addressEntryConstituents.get(3),addressEntryConstituents.get(4)));
+	try{
+		PreparedStatement insertStatement = connection.prepareStatement("insert into addressbookentries values(?,?,?,?,?)");
+		insertStatement.setString(1,nameToInsert);
+		insertStatement.setString(2,d.getAddress());
+		insertStatement.setString(3,d.getPhoneNumber());
+		insertStatement.setString(4,d.getEmail());
+		insertStatement.setString(5,d.getPhoneNumber());
+		insertStatement.executeUpdate();
+		System.out.println(nameToInsert + " created!");	
+		}
+		catch(SQLException e){
+			System.out.println("problem inserting record "+ nameToInsert);
+			System.out.println(e);
+		}	
+	}
+
+private void updateAddressBookEntry(AddressBookEntry entryToUpdate){
+	try{
+		PreparedStatement updateStatement = connection.prepareStatement("update addressbookentries set address = ?,phoneNumber = ?,email=?,zipCode = ? where name = ?");
+		updateStatement.setString(1,entryToUpdate.getAddress());
+		updateStatement.setString(2,entryToUpdate.getPhoneNumber());
+		updateStatement.setString(3, entryToUpdate.getEmail());
+		updateStatement.setString(4, entryToUpdate.getZipCode());
+		updateStatement.setString(5, entryToUpdate.getName());
+		updateStatement.executeUpdate();
+		System.out.println(entryToUpdate.getName() + " updated!");
+		}
+		catch(SQLException e){
+			System.out.println("problem updating record "+ entryToUpdate.getName());
+			System.out.println(e);
+		}	
+ }
+
+public void connectToDatabase(String connectionURL){
+    try{
+		connection=DriverManager.getConnection(connectionURL,"root","Wisdom20");
+		System.out.println("Should be connected to "+connectionURL +" now.");	
+		}catch(SQLException sqlException){
+			System.out.println("Error connecting to database URL: "+connectionURL);
+			sqlException.printStackTrace();
 			}
-	
 	}
-	catch (IOException e) {
-			e.printStackTrace();
-		} 
-	return listOfAddressRecords;
-}
-
-public void writeToFile()  {
-	try{
-    PrintWriter pw = new PrintWriter(new FileOutputStream(fileName));
-    for (AddressBookEntry entry : listOfAddressRecords)
-        pw.println(entry.toFileRecord());
-    pw.close();
-	}
-	catch(IOException e){
-		System.out.println("Failing on writing to " + fileName);
-		}
-}
-	
-
 }// end of class
-
-
