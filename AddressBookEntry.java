@@ -3,7 +3,7 @@ import version1.*;
 
 import java.util.*;
 
-public class AddressBookEntry implements Comparable<AddressBookEntry>,Comparator<AddressBookEntry>{
+public class AddressBookEntry{
 private String name;
 private String address;
 private String phoneNumber;
@@ -37,7 +37,7 @@ public void setPhoneNumber(String phone){
 	this.phoneNumber=phone;
 }
 public void setEmail(String email){
-	this.zipCode=email;
+	this.email=email;
 }
 public void setZipCode(String zip){
 	this.zipCode=zip;
@@ -53,10 +53,6 @@ public String toString(){
 			+ "\nzipCode: " + zipCode;
 }
 
-public String toFileRecord(){
-	return name + "," + address + "," + phoneNumber + "," + email + "," + zipCode;
-
-}
 public boolean equals(Object o) {
  
         // If the object is compared with itself then return true  
@@ -77,15 +73,6 @@ public boolean equals(Object o) {
         return (this.name).equals(c.name);
     }
 	
-// Overriding the compareTo method	
-   public int compareTo(AddressBookEntry d){
-      return (this.name.toLowerCase()).compareTo(d.getName().toLowerCase());
-   }
-
-   // Overriding the compare method to sort the zip 
-   public int compare(AddressBookEntry d, AddressBookEntry d1){
-      return (d.zipCode).compareTo(d1.getZipCode());
-   }
 
 public String getAddress() {
 	// TODO Auto-generated method stub
