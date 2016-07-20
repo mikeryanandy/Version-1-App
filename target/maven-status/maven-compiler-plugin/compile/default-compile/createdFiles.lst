@@ -1,4 +1,6 @@
 com\version1\bootcamp\AddressBookEntry.class
 com\version1\bootcamp\DAOInterface.class
+com\version1\bootcamp\RESTAddressBook.class
 com\version1\bootcamp\AddressBook.class
+com\version1\bootcamp\ApplicationController.class
 com\version1\bootcamp\DAOMysqlImplementation.class

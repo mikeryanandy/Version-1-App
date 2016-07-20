@@ -7,11 +7,13 @@ private static AddressBook application;
 private Scanner myScanner;
 private DAOInterface daoObject;
 
+/* - Removing main method to allow REST application to run
 public static void main(String[] args){
 	System.out.println("Welcome to the AddressBook application");
 	application = new AddressBook();
 	application.runApp();
 }
+*/
 
 public void runApp(){	
 	daoObject = new DAOMysqlImplementation();

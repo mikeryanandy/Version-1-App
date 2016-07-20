@@ -1,0 +1,2 @@
+Have created a REST service to handle the retrieval of an AddressBookEntry
+Idea now would be to expose all the features of the application as services and use Angular JS on the frontend to give me a snazzy interface
