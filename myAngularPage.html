@@ -4,14 +4,20 @@
 		<title>Hello AngularJS</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
     	<script src="hello.js"></script>
+		<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 	</head>
 
 	<body>
 		<div ng-controller="Hello">
-			<p>The ID is {{retrieve.id}}</p>
-			<p>The content is {{retrieve.content}}</p>
-			<p>The phoneNumber is {{retrieve.phoneNumber}}</p>
-			<p>Try this {{retrieve}}</p>
-		</div>
+			<h1>{{retrieve.name}}</h1>
+			<tr><p>PhoneNumber: {{retrieve.phoneNumber}}<t/p>
+			<p>Address: {{retrieve.address}}</p>
+			<p>Email: {{retrieve.email}}</p>
+			<p>ZipCode: {{retrieve.zipCode}}</p>
+			</tr>
+			</div
+
+		<div ng-controller="List">	
+			<h1>{{retrieve}}</h1>
 	</body>
 </html>

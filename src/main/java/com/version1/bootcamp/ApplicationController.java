@@ -19,6 +19,12 @@ public class ApplicationController {
 		return returned;
     }
 	
+	@RequestMapping("/list")
+    public List<AddressBookEntry> retrieve() {
+		List<AddressBookEntry> returned = new DAOMysqlImplementation().getListOfAddressRecords("name")
+		return returned;
+    }
+	
 	
 	
 }
